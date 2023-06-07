@@ -1,63 +1,48 @@
 class UserService {
-    constructor(db) {
-        this.client = db.sequelize;
-        this.User = db.User;
-        this.Room = db.Room;
-        this.Hotel = db.Hotel;
-        this.Reservation = db.Reservation;
-    }
+  constructor(db) {
+    this.client = db.sequelize;
+    this.User = db.User;
+  }
 
-    async create(firstName, lastName, username, salt, encryptedPassword) {
-        return this.User.create(
-            {
-                FirstName: firstName,
-                LastName: lastName,
-                Username: username,
-                Salt: salt,
-                EncryptedPassword: encryptedPassword
-            }
-        ) 
-    }
+  async create(username, firstName, lastName, email, salt, encryptedPassword) {
+    return this.User.create({
+      Username: username,
+      FirstName: firstName,
+      LastName: lastName,
+      Email: email,
+      Salt: salt,
+      EncryptedPassword: encryptedPassword,
+    });
+  }
 
-    async getAll() {
-        return this.User.findAll({
-            where: {}
-        })
-    }
-    
-    async getOne(userId) {        
-        return await this.User.findOne({
-            where: {id: userId},
-            include: {
-                model: this.Room,
-                through: {
-                    attributes: ['StartDate', 'EndDate']
-                }, 
-                include: {
-                    model: this.Hotel
-                }            
-            }
-        });
-    }
-    async getOneByName(username) {        
-        return await this.User.findOne({
-            where: {username: username},
-            include: {
-                model: this.Room,
-                through: {
-                    attributes: ['StartDate', 'EndDate']
-                }, 
-                include: {
-                    model: this.Hotel
-                }            
-            }
-        });
-    }
+  async getAll() {
+    return this.User.findAll({
+      where: {},
+    });
+  }
 
-    async deleteUser(userId) {
-        return this.User.destroy({
-            where: {id: userId}
-        })
-    }
+  async getOne(userId) {
+    return await this.User.findOne({
+      where: { id: userId },
+    });
+  }
+
+  async getOneByEmail(email) {
+    return await this.User.findOne({
+      where: { email: email },
+    });
+  }
+
+  async getOneByName(username) {
+    return await this.User.findOne({
+      where: { Username: username },
+    });
+  }
+
+  async deleteUser(userId) {
+    return this.User.destroy({
+      where: { id: userId },
+    });
+  }
 }
 module.exports = UserService;
